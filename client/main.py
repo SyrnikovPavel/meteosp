@@ -47,16 +47,19 @@ while True:
     oled.text('Lux:  {0}'.format(lux), 0, 40)
     if wi_fi_status:
         oled.text('Wi-Fi: True', 0, 50)
-    oled.show()
+        if n == 12:
+            # Отправка результатов на сервер
+            data = {'temp': temp, 'hum': hum, 'pres': pres, 'lux': lux}
+            res = urequests.request(
+                'POST',
+                'http://syrnikovpavel.pythonanywhere.com/climat_save',
+                json=ujson.dumps(data)
+            )
+            n = 0
 
-    # TODO Добавить отправку результатов
+    oled.show()
 
     # Сон
     sleep(5)
 
     n += 1
-
-    if n == 12:
-        data = {'temp': temp, 'hum': hum, 'pres': pres, 'lux': lux}
-        res = urequests.request('POST', 'http://syrnikovpavel.pythonanywhere.com/climat_save', json=ujson.dumps(data))
-        n = 0
