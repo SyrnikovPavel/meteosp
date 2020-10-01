@@ -4,4 +4,4 @@ openpyxl == 3.0.5
 statsmodels == 0.12.0
 plotly == 4.10.0
 dash == 1.16.2
-peewee == 3.13.2exit()
+peewee == 3.13.2git
