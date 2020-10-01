@@ -13,23 +13,15 @@ def load_data():
 
     # TODO Сделать обновление из базы
 
-    data = []
-    a = datetime.timedelta(0)
-    wb = load_workbook('data/data.xlsx')
-    ws = wb.active
-    for row in range(2, ws.max_row + 1):
-        if ws.cell(row=row, column=1).value.microsecond <= 999999:
-            a = datetime.timedelta(1 / 24 / 60 / 60 / 1000000) * (
-                        1000000 - ws.cell(row=row, column=1).value.microsecond)
+    data = [[
+        x.date,
+        x.temp,
+        x.hum,
+        x.pres,
+        x.lux
+    ] for x in Climat.select()]
 
-        data.append([
-            (ws.cell(row=row, column=1).value + a).replace(second=0),
-            ws.cell(row=row, column=2).value,
-            ws.cell(row=row, column=3).value,
-            ws.cell(row=row, column=4).value,
-        ])
-
-    df = pd.DataFrame(data, columns=['date', 'temp', 'hum', 'pres'])
+    df = pd.DataFrame(data, columns=['date', 'temp', 'hum', 'pres', 'lux'])
     df.index = df['date']
     del df['date']
 
@@ -65,19 +57,22 @@ def get_graphs(df, mean_by_day_df, mean_by_hour_df, variable_name='temp'):
     russian_names = {
         'temp': 'Температура',
         'hum': 'Влажность',
-        'pres': 'Давление'
+        'pres': 'Давление',
+        'lux': 'Освещенность'
     }
 
     names_y_axis = {
         'temp': 't, C',
         'hum': 'h, %',
-        'pres': 'p, мм.рт.ст.'
+        'pres': 'p, мм.рт.ст.',
+        'lux': 'l, люкс'
     }
 
     names_plot = {
         'temp': 'Среднесуточная температура',
         'hum': 'Среднесуточная влажность',
-        'pres': 'Среднесуточное давление'
+        'pres': 'Среднесуточное давление',
+        'lux': 'Среднесуточная освещенность'
     }
 
     x = df.index
@@ -140,7 +135,8 @@ def serve_layout():
             options=[
                 {'label': 'Температура', 'value': 'temp'},
                 {'label': 'Влажность', 'value': 'hum'},
-                {'label': 'Давление', 'value': 'pres'}
+                {'label': 'Давление', 'value': 'pres'},
+                {'label': 'Освещенность', 'value': 'lux'}
             ],
             value='temp'
         ),
